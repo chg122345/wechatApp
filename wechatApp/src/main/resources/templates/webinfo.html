@@ -1,0 +1,89 @@
+<!--
+  Created By Chen_9g
+  Copyright: Copyright (c) 2018. Chen_9g 陈刚 (80588183@qq.com).
+  Find a way for success and not make excuses for failure.
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" th:href="@{/css/style.css}">
+    <script type="text/javascript" src="/js/jquery-2.0.3.min.js" th:src="@{/js/jquery-2.0.3.min.js}"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+    <title>后台管理</title>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div id="wrapper">
+            <div class="overlay">
+            </div>
+            <div th:replace="~{__menu :: #sidebar-wrapper}"></div>
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+                    <span class="hamb-top"></span>
+                    <span class="hamb-middle"></span>
+                    <span class="hamb-bottom"></span>
+                </button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 col-lg-offset-1 table-responsive">
+                            <h3 class="page-header"> 商城信息</h3>
+                            <div style="padding-top:50px;"></div>
+                            <table class="table" id="goods_list">
+                                <form id="webinfo_info">
+                                <input type="hidden" class="form-control" name="id" th:value="${webinfo.id}">
+                                <tr>
+                                    <th>商城名称</th>
+                                    <td><input type="text" class="form-control" name="title"
+                                               th:value="${webinfo.title}"></td>
+                                </tr>
+                                <tr>
+                                    <th>商城公告</th>
+                                    <td><input type="text" class="form-control" name="notice"
+                                               th:value="${webinfo.notice}"></td>
+                                </tr>
+                                <tr>
+                                    <th>版权信息</th>
+                                    <td><input type="text" class="form-control" name="copyright"
+                                               th:value="${webinfo.copyright}"></td>
+                                </tr>
+                                <tr>
+                                    <th>操作</th>
+                                    <td align="center"> <button class="btn btn-info" id="webinfo_update"><span class="
+glyphicon glyphicon-pencil"></span>提交修改
+                                </button></td></tr>
+                                </form>
+                            </table>
+                            <div th:replace="~{__footer :: #footer_copyright}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#wrapper -->
+<div th:replace="~{__menu :: #nav_js}"></div>
+<script type="text/javascript">
+    $("#webinfo_update").click(function () {
+        $.ajax({
+            url:"/webInfo",
+            type:"PUT",
+            //async: false,
+            dataType:"json",
+            data:$('#webinfo_info').serialize(),
+            success:function (result) {
+                alert(result.msg);
+                window.location.href="/webInfo"
+            }
+        });
+        return false;
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!--
+  Created By Chen_9g
+  Copyright: Copyright (c) 2018. Chen_9g 陈刚 (80588183@qq.com).
+  Find a way for success and not make excuses for failure.
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <script type="text/javascript" src="/js/jquery-2.0.3.min.js" th:src="@{/js/jquery-2.0.3.min.js}"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+    <title>Title</title>
+</head>
+<body>
+<!-- Sidebar -->
+<nav class="navbar navbar-inverse navbar-fixed-top" id="sidebar-wrapper" role="navigation">
+    <ul class="nav sidebar-nav">
+        <li class="sidebar-brand">
+            <a href="#">
+                [[${session.admin.name}]]
+            </a>
+        </li>
+        <li>
+            <a href="/index"><i class="fa fa-fw fa-home"></i> Home</a>
+        </li>
+        <li>
+            <a href="/list"><i class="fa fa-fw fa-folder"></i>商品列表</a>
+        </li>
+        <li>
+            <a href="/add"><i class="fa fa-fw fa-file-o"></i>添加商品</a>
+        </li>
+
+        <li>
+            <a href="/userList"><i class="fa fa-fw fa-bank"></i>会员管理</a>
+        </li>
+        <li>
+            <a href="/orderList"><i class="fa fa-fw fa-dropbox"></i>订单管理</a>
+        </li>
+        <li>
+            <a href="/webInfo"><i class="fa fa-fw fa-cog"></i> 系统设置</a>
+        </li>
+        <li>
+            <a href="#"><i class="fa fa-fw fa-twitter"></i> 联系我</a>
+        </li>
+    </ul>
+</nav>
+<div id="nav_js">
+    <script type="text/javascript">
+        $(function () {
+            var trigger = $('.hamburger'),
+                overlay = $('.overlay'),
+                isClosed = false;
+            trigger.click(function () {
+                hamburger_cross();
+            });
+
+            function hamburger_cross() {
+
+                if (isClosed == true) {
+                    overlay.hide();
+                    trigger.removeClass('is-open');
+                    trigger.addClass('is-closed');
+                    isClosed = false;
+                } else {
+                    overlay.show();
+                    trigger.removeClass('is-closed');
+                    trigger.addClass('is-open');
+                    isClosed = true;
+                }
+            }
+
+            $('[data-toggle="offcanvas"]').click(function () {
+                $('#wrapper').toggleClass('toggled');
+            });
+        });
+    </script>
+</div>
+<!-- /#sidebar-wrapper -->
+</body>
+</html>

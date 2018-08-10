@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jqubian.wechat.dao.OrderMapper">
+    <resultMap id="BaseMap_ExUser" type="com.jqubian.wechat.bean.Order">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="orderId" property="orderId" jdbcType="VARCHAR"/>
+        <result column="totalNumber" property="totalNumber" jdbcType="INTEGER"/>
+        <result column="totalMoney" property="totalMoney" jdbcType="DOUBLE"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="orderTime" property="orderTime" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <collection property="items" javaType="com.jqubian.wechat.bean.OrderItem">
+            <id column="item_id" property="id" jdbcType="INTEGER"/>
+            <result column="number" property="number" jdbcType="INTEGER"/>
+            <result column="money" property="money" jdbcType="DOUBLE"/>
+            <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+            <association property="goods" select="com.jqubian.wechat.dao.GoodsMapper.selectById" column="goods_id"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="BaseMap" type="com.jqubian.wechat.bean.Order" extends="BaseMap_ExUser">
+        <!--分步查询user数据信息-->
+     <!--   <association property="user" select="com.jqubian.wechat.dao.UserMapper.selectById" column="user_id"/>-->
+        <association property="user" javaType="com.jqubian.wechat.bean.User">
+            <result column="user_name" property="name" jdbcType="VARCHAR"/>
+            <result column="user_address" property="address" jdbcType="VARCHAR"/>
+            <result column="user_phone" property="phone" jdbcType="VARCHAR"/>
+        </association>
+
+    </resultMap>
+    <sql id="item_join_column">
+    o.id,o.orderId,o.totalNumber,o.totalMoney,o.status,o.user_name,o.user_phone,o.user_address,o.orderTime,
+    item.id as item_id,item.number,item.money,item.order_id,item.goods_id
+</sql>
+
+    <select id="selectAll" resultMap="BaseMap">
+        select
+        <include refid="item_join_column"/>
+        from gxf_order o left join gxf_orderitem item
+        on o.orderId=item.order_id
+        order by o.id desc
+    </select>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseMap">
+        select
+        <include refid="item_join_column"/>
+        from gxf_order o left join gxf_orderitem item
+        on o.orderId=item.order_id
+        where o.id=#{id}
+        order by o.id desc
+    </select>
+
+    <select id="selectByService" resultMap="BaseMap_ExUser" parameterType="com.jqubian.wechat.bean.Order">
+        select
+        <include refid="item_join_column"/>
+        from gxf_order o left join gxf_orderitem item
+        on o.orderId=item.order_id
+        <trim prefix="where" prefixOverrides="and">
+            <if test="id!=null">
+              and o.id=#{id,jdbcType=INTEGER}
+            </if>
+            <if test="totalNumber!=null and totalNumber!=0">
+               and o.totalNumber=#{totalNumber,jdbcType=INTEGER}
+            </if>
+            <if test="totalMoney!=null and totalMoney!=0.0">
+                and o.totalMoney=#{totalMoney,jdbcType=DOUBLE}
+            </if>
+            <if test="status!=null">
+                and o.status=#{status,jdbcType=INTEGER}
+            </if>
+            <if test="user!=null and user.id!=null">
+                and o.user_id=#{user.id,jdbcType=VARCHAR}
+            </if>
+        </trim>
+        order by o.id desc
+
+    </select>
+
+    <insert id="insert" parameterType="com.jqubian.wechat.bean.Order">
+        insert into gxf_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                orderId,
+            </if>
+            <if test="totalNumber != null and totalNumber!=0">
+                totalNumber,
+            </if>
+            <if test="totalMoney != null and totalMoney!=0.0">
+                totalMoney,
+            </if>
+            <if test="user != null and user.id!=null">
+                user_id,
+            </if>
+            <if test="user != null and user.name!=null">
+                user_name,
+            </if>
+            <if test="user != null and user.phone!=null">
+                user_phone,
+            </if>
+            <if test="user != null and user.address!=null">
+                user_address,
+            </if>
+            <if test="orderTime != null">
+                orderTime,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderId != null">
+                #{orderId},
+            </if>
+            <if test="totalNumber != null and totalNumber!=0">
+                #{totalNumber},
+            </if>
+            <if test="totalMoney != null and totalMoney!=0.0">
+                #{totalMoney},
+            </if>
+            <if test="user != null and user.id!=null">
+                #{user.id},
+            </if>
+            <if test="user != null and user.name!=null">
+                #{user.name},
+            </if>
+            <if test="user != null and user.phone!=null">
+                #{user.phone},
+            </if>
+            <if test="user != null and user.address!=null">
+                #{user.address},
+            </if>
+            <if test="orderTime != null">
+                #{orderTime},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from gxf_order
+        where id=#{id}
+    </delete>
+
+    <delete id="deleteByService" parameterType="com.jqubian.wechat.bean.Order">
+        delete from gxf_order
+        <trim prefix="where" prefixOverrides="and">
+            <if test="id!=null">
+                and id=#{id,jdbcType=INTEGER}
+            </if>
+            <if test="totalNumber!=null and totalNumber!=0">
+                and totalNumber=#{totalNumber,jdbcType=INTEGER}
+            </if>
+            <if test="totalMoney!=null and totalMoney!=0.0">
+                and totalMoney=#{totalMoney,jdbcType=DOUBLE}
+            </if>
+            <if test="status!=null">
+                and status=#{status,jdbcType=INTEGER}
+            </if>
+            <if test="user!=null and user.id!=null">
+                and user_id=#{user.id,jdbcType=VARCHAR}
+            </if>
+            <if test="orderId!=null">
+                and orderId=#{orderId,jdbcType=VARCHAR}
+            </if>
+        </trim>
+
+    </delete>
+
+    <update id="updateByservice" parameterType="com.jqubian.wechat.bean.Order">
+        update gxf_order
+        <set>
+            <if test="totalNumber!=null and totalNumber!=0">
+                totalNumber=#{totalNumber,jdbcType=INTEGER},
+            </if>
+            <if test="totalMoney!=null and totalMoney!=0.0">
+               totalMoney=#{totalMoney,jdbcType=DOUBLE},
+            </if>
+            <if test="status!=null">
+                status=#{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+</mapper>

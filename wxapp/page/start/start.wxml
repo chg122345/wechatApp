@@ -1,0 +1,26 @@
+<!--start.wxml-->
+<view class="container">
+  <view class="remind-box" wx:if="{{remind}}">
+    <image class="remind-img" src="/image/more/loading.gif"></image>
+  </view>
+  <block wx:else>
+    <image class="title" src="/image/more/title8.png"></image>
+    <view class="content">
+      <view class="hd" style="transform:rotateZ({{angle}}deg);">
+        <!-- <image class="logo" src="{{userInfo.avatarUrl}}"></image> -->
+          <open-data type="userAvatarUrl" class="logo"></open-data>
+        <image class="wave" src="/image/more/wave.png" mode="aspectFill"></image>
+        <image class="wave wave-bg" src="/image/more/wave.png" mode="aspectFill"></image>
+      </view>
+      <view class="bd">
+         <image class="smalltitle" src="/image/more/start.png"></image>
+        <view class="confirm-btn">
+          <!-- <text >进入店铺</text> -->
+           <button wx:if="{{canIUse}}" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo">进入店铺</button>
+            <!-- <button wx:if="{{canIUse}}" open-type="getPhoneNumber" bindgetuserinfo="getPhoneNumber">进入店铺02</button> -->
+        </view>
+        <text class="copyright">{{copyright}}</text>
+      </view>
+    </view>
+  </block>
+</view>

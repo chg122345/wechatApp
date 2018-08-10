@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jqubian.wechat.dao.OrderItemMapper">
+    <resultMap id="BaseMap" type="com.jqubian.wechat.bean.OrderItem">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="number" property="number" jdbcType="INTEGER"/>
+        <result column="money" property="money" jdbcType="DOUBLE"/>
+        <result column="order_id" property="orderId" jdbcType="VARCHAR"/>
+        <association property="goods" select="com.jqubian.wechat.dao.GoodsMapper.selectById" column="gid"/>
+    </resultMap>
+
+    <sql id="base_column">
+        item.id,item.number,item.money,item.order_id,goods.id as gid, goods.name, goods.price, goods.abstracts, goods.img
+    </sql>
+
+    <insert id="insert" parameterType="com.jqubian.wechat.bean.OrderItem">
+        insert into gxf_orderitem
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="number != null and number!=0">
+                number,
+            </if>
+            <if test="money != null and money!=0.0">
+                money,
+            </if>
+            <if test="goods != null and goods.id!=null">
+                goods_id,
+            </if>
+            <if test="orderId != null">
+                order_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="number != null and number!=0">
+                #{number,jdbcType=INTEGER},
+            </if>
+            <if test="money != null and money!=0.0">
+                #{money,jdbcType=DOUBLE},
+            </if>
+            <if test="goods != null and goods.id!=null">
+                #{goods.id,jdbcType=INTEGER},
+            </if>
+            <if test="orderId != null">
+                #{orderId,jdbcType=INTEGER},
+            </if>
+        </trim>
+
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+    delete from gxf_orderitem
+    where id=#{id}
+</delete>
+
+    <delete id="deleteByService" parameterType="com.jqubian.wechat.bean.OrderItem">
+        delete from gxf_orderitem
+        <trim prefix="where" prefixOverrides="and">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="number != null and number!=0">
+                and number=#{number}
+            </if>
+            <if test="money != null and money!=0.0">
+                and money=#{money}
+            </if>
+            <if test="goods != null and goods.id!=null">
+                and goods_id=#{goods.id}
+            </if>
+        </trim>
+    </delete>
+
+    <delete id="deleteByOrderId" parameterType="java.lang.String">
+        delete from gxf_orderitem
+        where order_id=#{orderId}
+    </delete>
+
+    <update id="updateById" parameterType="java.lang.Integer">
+        update gxf_orderitem
+        <set>
+            <if test="id != null">
+                id=#{id},
+            </if>
+            <if test="number != null">
+                number=#{number},
+            </if>
+            <if test="money != null and money!=0.0">
+                money=#{money},
+            </if>
+            <if test="goods != null and goods.id!=null">
+                goods_id=#{goods.id},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseMap">
+        select <include refid="base_column"/>
+        from gxf_orderitem item left join gxf_goods goods on
+        item.goods_id=goods.id
+        where item.id=#{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseMap">
+        select <include refid="base_column"/>
+        from gxf_orderitem item left join gxf_goods goods on
+        item.goods_id=goods.id
+    </select>
+
+    <select id="selectByService" parameterType="com.jqubian.wechat.bean.OrderItem" resultMap="BaseMap">
+        select <include refid="base_column"/>
+        from gxf_orderitem item left join gxf_goods goods on
+        item.goods_id=goods.id
+        <trim prefix="where" prefixOverrides="and">
+            <if test="id != null">
+                and id=#{id}
+            </if>
+            <if test="number != null and number!=0">
+                and number=#{number}
+            </if>
+            <if test="money != null and money!=0.0">
+                and money=#{money}
+            </if>
+            <if test="goods != null and goods.id!=null">
+                and goods_id=#{goods.id}
+            </if>
+            <if test="orderId != null">
+                and order_id=#{orderId}
+            </if>
+        </trim>
+    </select>
+</mapper>

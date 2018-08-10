@@ -1,0 +1,128 @@
+<!--
+  Created By Chen_9g
+  Copyright: Copyright (c) 2018. Chen_9g 陈刚 (80588183@qq.com).
+  Find a way for success and not make excuses for failure.
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" th:href="@{/css/style.css}">
+    <script type="text/javascript" src="/js/jquery-2.0.3.min.js" th:src="@{/js/jquery-2.0.3.min.js}"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+    <title>添加商品</title>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div id="wrapper">
+            <div class="overlay">
+            </div>
+            <div th:replace="~{__menu :: #sidebar-wrapper}"></div>
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+                    <span class="hamb-top"></span>
+                    <span class="hamb-middle"></span>
+                    <span class="hamb-bottom"></span>
+                </button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 col-lg-offset-1 table-responsive">
+                            <h3 align="center">商品信息</h3>
+                            <form id="goods_info_form" method="post" enctype="multipart/form-data">
+                                <table class="table table-bordered">
+                                    <tr>
+                                        <td>名称：</td>
+                                        <td><input type="text" name="name" class="form-control" id="goods_name"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>单价：</td>
+                                        <td><input type="text" name="price" class="form-control" id="goods_price"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>插图：</td>
+                                        <td><input type="file" name="file" class="form-control"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>分类：</td>
+                                        <td><select class="form-control" name="type">
+                                           <option value="0">其他</option>
+                                           <option value="1">鲜果</option>
+                                           <option value="2">蔬菜</option>
+                                           <option value="3">肉类</option>
+                                        </select></td>
+                                    </tr>
+                                   <!-- <tr>
+                                        <td colspan="2">
+                                            <div id="edti" name="content"></div>
+                                        </td>
+                                    </tr>-->
+                                    <tr>
+                                        <td>详情描述：</td>
+                                        <td><textarea class="form-control" name="abstracts"></textarea></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" align="center">
+                                            <button class="btn btn-success" id="add_article_submit">确定添加</button>
+                                            <button type="reset" class="btn btn-warning">重置信息</button>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </form>
+                            <div th:replace="~{__footer :: #footer_copyright}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#wrapper -->
+<div th:replace="~{__menu :: #nav_js}"></div>
+<script type="text/javascript" src="/release/wangEditor.js"></script>
+<script type="text/javascript">
+  /*  var E = window.wangEditor;
+    var editor = new E('#edti');
+    editor.create();*/
+
+    function checkinfo() {
+        var name = $("#goods_name").val();
+        var price = $("#goods_price").val();
+        if (name.length == 0) {
+            $("#goods_name").attr("placeholder","商品名称不能为空");
+            return false;
+        }
+        if (price.length == 0) {
+            $("#goods_price").attr("placeholder","商品价格不能为空");
+            return false;
+        }
+        return true;
+    }
+
+    $("#add_article_submit").click(function () {
+        var articleData = new FormData($("#goods_info_form")[0]);
+       // articleData.append('abstracts', editor.txt.html());
+        if (!checkinfo()) {
+            return false;
+        }else {
+            $.ajax({
+                url: "/goodsInfo",
+                type: "POST",
+                data: articleData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    alert(result.msg);
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

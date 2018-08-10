@@ -1,0 +1,264 @@
+<!--
+  Created By Chen_9g
+  Copyright: Copyright (c) 2018. Chen_9g 陈刚 (80588183@qq.com).
+  Find a way for success and not make excuses for failure.
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link href="/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" th:href="@{/css/style.css}">
+    <script type="text/javascript" src="/js/jquery-2.0.3.min.js" th:src="@{/js/jquery-2.0.3.min.js}"></script>
+    <script type="text/javascript" src="/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div id="wrapper">
+            <div class="overlay">
+            </div>
+            <div th:replace="~{__menu :: #sidebar-wrapper}"></div>
+
+            <!-- Page Content -->
+            <div id="page-content-wrapper">
+                <button type="button" class="hamburger is-closed animated fadeInLeft" data-toggle="offcanvas">
+                    <span class="hamb-top"></span>
+                    <span class="hamb-middle"></span>
+                    <span class="hamb-bottom"></span>
+                </button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12 table-responsive">
+                            <h3 class="page-header"> 用户订单列表</h3>
+                            <div style="padding-top:50px;"></div>
+                            <div class="row">
+                                <div class="col-md-4 col-md-offset-8">
+                                    <button class="btn btn-sm btn-success pull-right" id="delete_all_btn">发货</button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-condensed" id="order_list">
+                                    <thead>
+                                    <tr>
+                                        <th><input type="checkbox" id="check_all"></th>
+                                        <th>id</th>
+                                        <th>订单编号</th>
+                                        <th>订单数量</th>
+                                        <th>订单金额</th>
+                                        <th>订单用户</th>
+                                        <th>联系电话</th>
+                                        <th>收货地址</th>
+                                        <th>订单状态</th>
+                                        <th>下单时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="row">
+                                <!--分页详情-->
+                                <div class="col-md-6 pageMessage" id="page_info_area"></div>
+                                <!--分页组件-->
+                                <div class="col-md-6" id="page_nav_area"></div>
+                            </div>
+
+                            <div th:replace="~{__footer :: #footer_copyright}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#wrapper -->
+<script type="text/javascript">
+    var totalRecord, currentPage;
+    //1.页面加载完成后直接去发ajax请求
+    $(function (pn) {
+        tosend(1);
+    });
+
+    //检查当前是不是全选装填
+    function checkAllOrNot() {
+        var flag = ($(".check_item:checked").length == $(".check_item").length);
+        $("#check_all").prop("checked", flag);
+    }
+
+    function tosend(page) {
+        $.ajax({
+                url: "/orderInfo",
+                data: "page=" + page,
+                type: "GET",
+                success: function (result) {
+                    content_info(result);
+                    //2. 解析显示分页信息
+                    build_page_info(result);
+                    //3. 解析显示分页条
+                    build_page_nav(result);
+                }
+            }
+        );
+    }
+
+    function content_info(result) {
+        $("#order_list tbody").empty();
+        var nu = result.data.pageInfo.list;
+        $.each(nu, function (index, order) {
+            var checkBoxTd = $("<td><input type='checkbox' class='check_item'></td>")
+            var idTd = $("<td></td>").append(order.id);
+            var orderIdTd = $("<td></td>").append(order.orderId);
+            var numberTd = $("<td></td>").append(order.totalNumber);
+            var moneyTd = $("<td></td>").append(order.totalMoney);
+            var user_nameTd = $("<td></td>").append(order.user.name);
+            var user_phoneTd = $("<td></td>").append(order.user.phone);
+            var user_addressTd = $("<td></td>").append(order.user.address);
+            if (order.status == 0) {
+                var statusTd = $("<td></td>").append("未付款");
+            } else if (order.status == 1) {
+                var statusTd = $("<td></td>").append("已付款");
+            } else if (order.status == 2) {
+                var statusTd = $("<td></td>").append("未发货");
+            } else if (order.status == 3) {
+                var statusTd = $("<td></td>").append("已发货");
+            } else if (order.status == 4) {
+                var statusTd = $("<td></td>").append("交易成功");
+            }
+            var createdTd = $("<td></td>").append(order.orderTime);
+            var editBtn = $("<button></button>").addClass("btn btn-info btn-xs edit_btn")
+                .append($("<span></span>").addClass("glyphicon glyphicon-pencil")).append(" ");
+                editBtn.attr("edit-id", order.id);
+            var delBtn = $("<button></button>").addClass("btn btn-danger btn-xs delete_btn")
+                .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append(" ");
+                delBtn.attr("del-id", order.id);
+            var btnTd = $("<td></td>").append(editBtn).append(" ").append(delBtn);
+            $("<tr></tr>").append(checkBoxTd)
+                .append(idTd)
+                .append(orderIdTd)
+                .append(numberTd)
+                .append(moneyTd)
+                .append(user_nameTd)
+                .append(user_phoneTd)
+                .append(user_addressTd)
+                .append(statusTd)
+                .append(createdTd)
+                .append(btnTd)
+                .appendTo("#order_list tbody");
+
+        });
+    }
+
+    //解析显示分页信息
+    function build_page_info(result) {
+        $("#page_info_area").empty();
+        $("#page_info_area").append("当前第" +
+            result.data.pageInfo.pageNum + "页,总共" +
+            result.data.pageInfo.pages + "页，总共" +
+            result.data.pageInfo.total + "条记录");
+        totalRecord = result.data.pageInfo.total;
+        currentPage = result.data.pageInfo.pageNum;
+    }
+
+    //解析显示分页条,点击事件
+    function build_page_nav(result) {
+        $("#page_nav_area").empty();
+        var ul = $("<ul></ul>").addClass("pagination");
+
+        var firstPageLi = $("<li></li>").append($("<a></a>").append("首页"));
+        var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;"));
+        if (!result.data.pageInfo.hasPreviousPage) {
+            firstPageLi.addClass("disabled");
+            prePageLi.addClass("disabled");
+        } else {
+            //首页上一页添加事件
+            firstPageLi.click(function () {
+                tosend(1);
+            });
+            prePageLi.click(function () {
+                tosend(result.data.pageInfo.pageNum - 1);
+            });
+        }
+
+        var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
+        var lastPageLi = $("<li></li>").append($("<a></a>").append("尾页"));
+        if (!result.data.pageInfo.hasNextPage) {
+            nextPageLi.addClass("disabled");
+            lastPageLi.addClass("disabled");
+        } else {
+            //尾页下一页添加事件
+            nextPageLi.click(function () {
+                tosend(result.data.pageInfo.pageNum + 1);
+            });
+            lastPageLi.click(function () {
+                tosend(result.data.pageInfo.pages);
+            });
+        }
+
+        // 首页前一页
+        ul.append(firstPageLi).append(prePageLi);
+        // 遍历得到页码
+        $.each(result.data.pageInfo.navigatepageNums, function (index, item) {
+            var numLi = $("<li></li>").append($("<a></a>").append(item));
+            if (result.data.pageInfo.pageNum == item) {
+                numLi.addClass("active");
+            }
+            //点击重新请求
+            numLi.click(function () {
+                tosend(item);
+            });
+            ul.append(numLi);
+        });
+        // 下一页末页
+        ul.append(nextPageLi).append(lastPageLi);
+        var navEle = $("<nav></nav>").append(ul);
+        navEle.appendTo("#page_nav_area");
+    }
+
+    //全选全不选
+    $("#check_all").click(function () {
+        //attr获取自定义属性
+        //prop修改和读取dom原生的属性
+        $(".check_item").prop("checked", $(this).prop("checked"));
+    });
+    //每个checkitem单击事件
+    $(document).on("click", ".check_item", function () {
+        //判断当前选择中的元素是否5个
+        checkAllOrNot();
+    });
+
+    //批量删除
+    $("#delete_all_btn").click(function () {
+        if ($(".check_item:checked").length <= 0) {
+            alert("请勾选需要发货的订单信息!");
+        } else {
+            var title = "";
+            var del_ids = "";
+            $.each($(".check_item:checked"), function () {
+                title += $(this).parents("tr").find("td:eq(2)").text() + ",";  //取第二列的标题的值
+                if ($(this).parents("tr").find("td:eq(8)").text()=="已付款") {
+                    del_ids += $(this).parents("tr").find("td:eq(1)").text() + ":";  //id值
+                }
+            });
+            //最后的逗号,处理
+            title.substring(0, title.length - 1);
+            // del_ids.substring(0,del_ids.length-1);
+            if (confirm("确认将[" + title + "]发货吗?")) {
+                $.ajax({
+                    url: "/orderInfo",
+                    type: "PUT",
+                    data:{
+                        ids:del_ids,
+                    },
+                    success: function (result) {
+                        alert(result.msg);
+                        tosend(currentPage);
+                    }
+                })
+            }
+        }
+    });
+</script>
+<div th:replace="~{__menu :: #nav_js}"></div>
+</body>
+</html>

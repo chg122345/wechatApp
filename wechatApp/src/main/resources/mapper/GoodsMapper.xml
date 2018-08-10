@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jqubian.wechat.dao.GoodsMapper">
+    <resultMap id="BaseMap" type="com.jqubian.wechat.bean.Goods">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="DOUBLE"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="abstracts" property="abstracts" jdbcType="VARCHAR"/>
+        <result column="img" property="img" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="QueryInfo">
+        id, name, price, type, abstracts, img
+    </sql>
+    <insert id="insert" parameterType="com.jqubian.wechat.bean.Goods">
+        insert into gxf_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="price != null and price!=0.0">
+                price,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="abstracts != null">
+                abstracts,
+            </if>
+            <if test="img != null">
+                img,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null and price !=0.0">
+                #{price,jdbcType=DOUBLE},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="abstracts != null">
+                #{abstracts,jdbcType=VARCHAR},
+            </if>
+            <if test="img != null">
+                #{img,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from gxf_goods
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <delete id="deleteByService" parameterType="com.jqubian.wechat.bean.Goods">
+        delete from gxf_goods
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="id != null">
+                id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                AND name=#{name,jdbcType=VARCHAR}
+            </if>
+            <if test="price != null and price!=0.0">
+                AND price=#{price,jdbcType=DOUBLE}
+            </if>
+            <if test="abstracts != null">
+                AND abstracts=#{abstracts,jdbcType=VARCHAR}
+            </if>
+            <if test="img != null">
+                AND img=#{img,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </delete>
+
+    <update id="updateById" parameterType="com.jqubian.wechat.bean.Goods">
+        update gxf_goods
+        <set>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null and price !=0.0">
+                price = #{price,jdbcType=DOUBLE},
+            </if>
+            <if test="type != null and type !=0">
+                type = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="abstracts != null">
+                abstracts = #{abstracts,jdbcType=VARCHAR},
+            </if>
+            <if test="img != null">
+                img=#{img,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectById" parameterType="java.lang.Integer" resultMap="BaseMap">
+        select
+        <include refid="QueryInfo"/>
+        from gxf_goods
+        where id=#{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseMap">
+        select
+        <include refid="QueryInfo"/>
+        from gxf_goods
+    </select>
+    <select id="selectByService" parameterType="com.jqubian.wechat.bean.User" resultMap="BaseMap">
+        select
+        <include refid="QueryInfo"/>
+        from gxf_goods
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="id != null">
+                AND id= #{id,jdbcType=INTEGER}
+            </if>
+            <if test="name != null">
+                AND name=#{name,jdbcType=VARCHAR}
+            </if>
+            <if test="price != null and price !=0.0">
+                AND price=#{price,jdbcType=DOUBLE}
+            </if>
+            <if test="type != null and type !=0">
+                AND type=#{type,jdbcType=INTEGER}
+            </if>
+            <if test="abstracts != null">
+                AND abstracts=#{abstracts,jdbcType=VARCHAR}
+            </if>
+            <if test="img != null">
+                AND img=#{img,jdbcType=VARCHAR}
+            </if>
+        </trim>
+    </select>
+    <select id="selectByType" parameterType="java.lang.Integer" resultMap="BaseMap">
+        select
+        <include refid="QueryInfo"/>
+        from gxf_goods
+        where type=#{type,jdbcType=INTEGER}
+    </select>
+</mapper>

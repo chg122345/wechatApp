@@ -1,0 +1,41 @@
+<!--
+  Created By Chen_9g
+  Copyright: Copyright (c) 2018. Chen_9g 陈刚 (80588183@qq.com).
+  Find a way for success and not make excuses for failure.
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<div id="edti_js">
+    <script type="text/javascript" src="/release/wangEditor.js"></script>
+    <script type="text/javascript">
+        var E = window.wangEditor;
+        var editor = new E('#edti');
+        editor.create();
+        $("#add_article_submit").click(function () {
+            var articleData = new FormData($("#goods_info_form")[0]);
+            articleData.append('abstracts', editor.txt.html());
+            if ($('#goods_name').val().length == 0) {
+                $('#goods_name').value("商品名称不能为空").css("color", "red");
+                return false;
+            }
+            $.ajax({
+                url: "/submitGoodsInfo",
+                type: "POST",
+                data: articleData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (result) {
+                    alert(result.msg);
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,26 @@
+server:
+  port: 8888
+spring:
+  datasource:
+    url: jdbc:mysql://120.78.131.95:3306/wechat?useUnicode=true&characterEncoding=utf8
+    username: root
+    password: ZXF-cgLOVE1223
+    driver-class-name: com.mysql.jdbc.Driver
+  profiles:
+    active: dev
+  thymeleaf:
+    cache: false
+    encoding: UTF-8
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    check-template-location: false
+  messages:
+    basename: i18n/messages
+mybatis:
+  config-location: classpath:mybatis.xml
+  mapper-locations: classpath:mapper/*.xml
+
+webUrl: http://127.0.0.1:8888
+appId: wx6105a569cd9d7154
+secret: cf6ef6056a062aa00703197fc5eee6b7

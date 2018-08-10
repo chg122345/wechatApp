@@ -1,0 +1,48 @@
+<view class="main">
+    <view class="header">
+         <image src="{{thumb}}" class="thumb"></image> 
+         <text class="nickname" selectable='true'>{{nickname}}</text> <!--头像 昵称 -->
+        <!-- <open-data type="userAvatarUrl" class="thumb"></open-data>
+        <open-data type="userNickName" class="nickname"></open-data> -->
+        <text class="about" bindtap='aboutMe'>关于我们</text>
+    </view>
+    <view class="address-box">
+        <view class="address-manage">
+            <navigator url="/page/component/address/address">收货地址管理</navigator>
+        </view>
+        <view wx:if="{{hasAddress}}" class="address-list">
+            <view>收货人: <text selectable='true'>{{address.name}}</text></view>
+            <view>联系电话:<text selectable='true'> {{address.phone}}</text></view>
+            <view>详细地址:<text selectable='true'> {{address.detail}}</text></view>
+        </view>
+    </view>
+   <view wx:if="{{hasOrder}}">
+    <view class="orders-box">
+        <view class="orders">我的订单</view>
+        <view class="orders-list" wx:for="{{orders}}" wx:key="index">
+            <view class="orders-number"> <text selectable='true'>订单编号：{{item.orderId}}</text>
+             <button wx:if="{{item.status==0||item.status==4}}" size="mini" class="orders-btn" bindtap="delOrders" data-id='{{item.id}}'>删除</button>
+              <button wx:if="{{item.status==3}}" size="mini" class="orders-btn" bindtap="updateOrders" data-id='{{item.id}}'> 收货</button>
+            </view>
+            <view class="orders-detail" wx:for="{{item.items}}" wx:for-item="orderItem" wx:key="itemsindex">
+                <image src="{{orderItem.goods.img}}"></image>
+                <view class="">{{orderItem.goods.name}}</view>
+                <view class="">{{orderItem.number}}</view>
+                <text class="orders-status" wx:if="{{item.status==0}}">未付款</text>
+                <text class="orders-status" wx:if="{{item.status==1}}">已付款</text>
+                <text class="orders-status" wx:if="{{item.status==2}}">未发货</text>
+                <text class="orders-status" wx:if="{{item.status==3}}">已发货</text>
+                <text class="orders-status" wx:if="{{item.status==4}}">交易成功</text>
+            </view>
+            <view class="orders-footer">
+                <text wx:if="{{item.status==0}}">待支付：￥{{item.totalMoney}}</text>
+                <text wx:if="{{item.status>0}}">实付：￥{{item.totalMoney}}</text>
+                <button wx:if="{{item.status==0}}" size="mini" class="orders-btn" bindtap="payOrders">付款</button>
+            </view>
+        </view>
+    </view>
+  </view>
+    <view wx:else>
+     <view class="cart-no-data">您还没有订单信息哦~</view>
+    </view>
+</view>
